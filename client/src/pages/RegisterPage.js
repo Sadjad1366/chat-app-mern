@@ -1,4 +1,8 @@
 import React from "react";
+import { IoIosClose } from "react-icons/io";
+import { className } from "../utils/classname";
+import { Link } from 'react-router-dom';
+import uploadFile from "../helpers/uploadfile";
 
 const RegisterPage = () => {
   const [data, setData] = React.useState({
@@ -8,7 +12,7 @@ const RegisterPage = () => {
     profile_pic: "",
   });
 
-  const[uploadPhoto, setUploadPhoto] = React.useState("")
+  const [uploadPhoto, setUploadPhoto] = React.useState("");
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
@@ -21,19 +25,38 @@ const RegisterPage = () => {
     });
   };
 
-  const handleUploadPhoto = (e) => {
-    const file = e.target.files[0]
-    setUploadPhoto(file)
-  }
+  const handleUploadPhoto = async(e) => {
+    const file = e.target.files[0];
 
-  console.log('uploadPhoto: ', uploadPhoto);
+    const uploadPhoto = await uploadFile(file)
+    console.log("uploadPhoto:", uploadPhoto);
+    setUploadPhoto(file);
+    setData((prev) => {
+      return {
+        ...prev,
+        profile_pic: uploadPhoto?.url
+      }
+    })
+  };
+  const handleClearPhoto = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setUploadPhoto(null);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log("data ", data);
+  };
 
   return (
+
     <div className="mt-5">
-      <div className="bg-white w-full max-w-sm mx-2 rounded overflow-hidden p-4">
+      <div className="bg-white w-full max-w-sm rounded overflow-hidden p-4 mx-auto">
         <h3>Welcome to Chat app</h3>
 
-        <form className="grid gap-3">
+        <form className="grid gap-3" onSubmit={handleSubmit}>
           <div className="flex flex-col">
             <label htmlFor="name">Name: </label>
             <input
@@ -75,11 +98,24 @@ const RegisterPage = () => {
           </div>
           <div className="flex flex-col">
             <label htmlFor="profile_pic">
-              photo:
-              <div className="h-14 bg-slate-200 flex justify-center items-center border hover:border-green-500 rounded-lg hover:cursor-pointer">
+              Photo:
+              <div
+                className={className(
+                  "h-14 bg-slate-200 flex justify-center items-center border",
+                  "hover:border-green-500 rounded-lg hover:cursor-pointer"
+                )}
+              >
                 <p className="text-sm">
-                  {uploadPhoto.name ? uploadPhoto?.name : "Upload your photo"}
-                  </p>
+                  {uploadPhoto?.name ? uploadPhoto?.name : "Upload your photo"}
+                </p>
+                {uploadPhoto?.name && (
+                  <button
+                    className="ml-2 text-lg hover:text-red-600"
+                    onClick={handleClearPhoto}
+                  >
+                    <IoIosClose />
+                  </button>
+                )}
               </div>
             </label>
             <input
@@ -90,7 +126,17 @@ const RegisterPage = () => {
               onChange={handleUploadPhoto}
             />
           </div>
+          <button
+            className={className(
+              "bg-red-800 text-white font-semibold rounded-lg",
+              " py-1 leading-relaxed hover:bg-red-600",
+              "transition ease-in-out active:translate-y-1"
+            )}
+          >
+            Register
+          </button>
         </form>
+        <p className="mt-2 text-center font-semibold"> Already have an Acoount ? <Link className=" text-blue-500 hover:text-blue-700 underline" to={"/email"}>Login</Link> </p>
       </div>
     </div>
   );
