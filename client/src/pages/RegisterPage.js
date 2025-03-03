@@ -1,8 +1,10 @@
 import React from "react";
 import { IoIosClose } from "react-icons/io";
 import { className } from "../utils/classname";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import uploadFile from "../helpers/uploadfile";
+import axios from 'axios'
+import toast from 'react-hot-toast'
 
 const RegisterPage = () => {
   const [data, setData] = React.useState({
@@ -13,6 +15,7 @@ const RegisterPage = () => {
   });
 
   const [uploadPhoto, setUploadPhoto] = React.useState("");
+  const navigate = useNavigate();
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
@@ -29,7 +32,7 @@ const RegisterPage = () => {
     const file = e.target.files[0];
 
     const uploadPhoto = await uploadFile(file)
-    console.log("uploadPhoto:", uploadPhoto);
+    // console.log("uploadPhoto:", uploadPhoto);
     setUploadPhoto(file);
     setData((prev) => {
       return {
@@ -44,9 +47,30 @@ const RegisterPage = () => {
     setUploadPhoto(null);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     e.stopPropagation();
+
+    const URL = `${process.env.REACT_APP_BACKEND_URL}/api/register`
+     try {
+          const response = await axios.post(URL,data)
+          console.log("response", response)
+          toast.success(response.data.message)
+
+          if(response.data.message) {
+            setData({
+              name: "",
+              email: "",
+              password: "",
+              profile_pic: "",
+            });
+            navigate('/email')
+          }
+     } catch (error) {
+         toast.error(error?.response.data?.message)
+        console.error(error)
+     }
+
     console.log("data ", data);
   };
 
