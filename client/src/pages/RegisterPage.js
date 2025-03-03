@@ -1,10 +1,10 @@
+import axios from 'axios'
 import React from "react";
+import toast from 'react-hot-toast'
 import { IoIosClose } from "react-icons/io";
 import { className } from "../utils/classname";
-import { Link, useNavigate } from 'react-router-dom';
 import uploadFile from "../helpers/uploadfile";
-import axios from 'axios'
-import toast from 'react-hot-toast'
+import { Link, useNavigate } from 'react-router-dom';
 
 const RegisterPage = () => {
   const [data, setData] = React.useState({
@@ -32,7 +32,7 @@ const RegisterPage = () => {
     const file = e.target.files[0];
 
     const uploadPhoto = await uploadFile(file)
-    // console.log("uploadPhoto:", uploadPhoto);
+    console.log("uploadPhoto:", uploadPhoto);
     setUploadPhoto(file);
     setData((prev) => {
       return {
@@ -71,11 +71,9 @@ const RegisterPage = () => {
         console.error(error)
      }
 
-    console.log("data ", data);
+    console.log("dataaa ", data);
   };
-
   return (
-
     <div className="mt-5">
       <div className="bg-white w-full max-w-sm rounded overflow-hidden p-4 mx-auto">
         <h3>Welcome to Chat app</h3>
