@@ -7,24 +7,24 @@ import uploadFile from "../helpers/uploadfile";
 import { LuCircleUserRound } from "react-icons/lu";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import Avatar from "../components/Avatar";
-
+import { useDispatch } from "react-redux";
+import { setToken, setUser } from "../redux/userSlice";
 
 const CheckPasswordPage = () => {
   const [data, setData] = React.useState({
     password: "",
-    userId:""
+    userId: "",
   });
   const navigate = useNavigate();
   const location = useLocation();
-
-  console.log("location: ", location.state)
+  const dispatch = useDispatch();
 
   React.useEffect(() => {
     console.log("Location State: ", location.state);
-    if(!location?.state?.name) {
-      navigate('/email')
+    if (!location?.state?.name) {
+      navigate("/email");
     }
-  },[])
+  }, []);
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
@@ -44,18 +44,20 @@ const CheckPasswordPage = () => {
     const URL = `${process.env.REACT_APP_BACKEND_URL}/api/password`;
     try {
       const response = await axios({
-        method:'post',
+        method: "post",
         url: URL,
         data: {
           userId: location?.state._id,
-          password: data.password
+          password: data.password,
         },
-        withCredentials: true
-      })
-      
+        withCredentials: true,
+      });
+
       toast.success(response.data.message);
 
       if (response.data.message) {
+        dispatch(setToken(response?.data?.token));
+        localStorage.setItem("token", response?.data?.token);
         setData({
           password: "",
         });
@@ -69,21 +71,21 @@ const CheckPasswordPage = () => {
   return (
     <div className="mt-5">
       <div className="bg-white w-full max-w-sm rounded overflow-hidden p-4 mx-auto">
-
-        <div className ='w-fit mx-auto mb-2 flex justify-center items-center flex-col'>
-        {/* <LuCircleUserRound
+        <div className="w-fit mx-auto mb-2 flex justify-center items-center flex-col">
+          {/* <LuCircleUserRound
         size={70}
          /> */}
-         <Avatar
-         width={70}
-         height={70}
-         name={location?.state?.name}
-         imageUrl={location?.state?.profile_pic}
-         />
-         <h2 className="font-semibold text-lg mt-1">{location?.state?.name}</h2>
-
+          <Avatar
+            width={70}
+            height={70}
+            name={location?.state?.name}
+            imageUrl={location?.state?.profile_pic}
+          />
+          <h2 className="font-semibold text-lg mt-1">
+            {location?.state?.name}
+          </h2>
         </div>
-        <h3 className='mb-3'>Welcome to Chat app</h3>
+        <h3 className="mb-3">Welcome to Chat app</h3>
 
         <form className="grid gap-3" onSubmit={handleSubmit}>
           <div className="flex flex-col">
