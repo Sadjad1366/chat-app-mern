@@ -25,8 +25,6 @@ const EditUserDetails = ({ onClose, user }) => {
   }, [user]);
 
   const handleOnChange = (e) => {
-    //     e.preventDefault();
-    //     e.stopPropagation();
     const { name, value } = e.target;
     setData((prev) => {
       return { ...prev, [name]: value };
