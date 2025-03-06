@@ -10,7 +10,7 @@ const UserSearchCard = ({user, onClose}) => {
         width={50}
         height={50}
         name={user.name}
-        // imageUrl={user.profile_pic}
+        userId={user?._id}
         />
       </div>
       <div className='text-lg'>
