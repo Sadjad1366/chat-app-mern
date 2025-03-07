@@ -17,6 +17,11 @@ const mongoose = require("mongoose");
             type: Boolean,
             default: false,
           },
+          msgByUserId: {
+            type: mongoose.Schema.ObjectId,
+            required: true,
+            ref: "User",
+          }
 },{
       timestamps: true,
 });
@@ -33,7 +38,7 @@ const conversationSchema = new mongoose.Schema(
       required: true,
       ref: "User",
     },
-    message: [
+    messages: [
       {
         type: mongoose.Schema.ObjectId,
         ref: "Message",

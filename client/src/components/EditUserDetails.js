@@ -73,7 +73,7 @@ const handleOpenUploadPhoto = (e) => {
   };
 
   return (
-    <div className="fixed bottom-0 top-0 right-0 left-0 bg-gray-600 bg-opacity-40 flex justify-center items-center">
+    <div className="fixed bottom-0 top-0 right-0 left-0 bg-gray-600 bg-opacity-40 flex justify-center items-center z-10">
       <div className="bg-white p-4 m-1 py-6 rounded w-full max-w-sm">
         <h2 className="font-semibold">Profile Details</h2>
         <p className="text-sm">Edit user details</p>

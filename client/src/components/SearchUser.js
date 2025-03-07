@@ -20,7 +20,6 @@ const SearchUser = ({onClose}) => {
       const response = await axios.post(URL, {
         search: search,
       });
-      console.log("API Response:", response.data);
       setLoading(false);
       setSearchUser(response.data.data);
     } catch (error) {
@@ -30,11 +29,12 @@ const SearchUser = ({onClose}) => {
 
   React.useEffect(() => {
     handleSearchUser();
+    console.log("search user: ", searchUser);
+
   }, [search]);
 
-  console.log("searchUser", searchUser);
   return (
-    <div className="fixed top-0 bottom-0 left-0 right-0 bg-slate-700 bg-opacity-40 p-2">
+    <div className="fixed top-0 bottom-0 left-0 right-0 bg-slate-700 bg-opacity-40 p-2 z-10">
       <div className="w-full max-w-lg mx-auto mt-10">
         {/**input search user*/}
         <div className="bg-white rounded h-14 flex items-center">
@@ -50,7 +50,7 @@ const SearchUser = ({onClose}) => {
           </div>
         </div>
         {/** display search user*/}
-        <div className="bg-white mt-2 w-full p-4 rounded">
+        <div className="bg-white mt-2 w-full p-4 rounded overflow-y-scroll">
           {/**no user found*/}
           {searchUser.length === 0 && !loading && (
             <p className="text-center text-slate-500">no user found!</p>

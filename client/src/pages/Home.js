@@ -1,11 +1,11 @@
 import axios from "axios";
 import React from "react";
+import io from 'socket.io-client'
+import logo from '../assets/logo.jpg'
+import Sidebar from "../components/Sidebar";
 import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { logout, setOnlineUser, setUser } from "../redux/userSlice";
-import Sidebar from "../components/Sidebar";
-import logo from '../assets/logo.jpg'
-import io from 'socket.io-client'
+import { logout, setOnlineUser, setSocketConnection, setUser } from "../redux/userSlice";
 
 const Home = () => {
   const user = useSelector((state) => state.user);
@@ -13,7 +13,7 @@ const Home = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  console.log("redux online", user)
+  console.log("redux online user", user)
 
   const fetchUserDetails = async () => {
     try {
@@ -50,6 +50,8 @@ const Home = () => {
       console.log("dataaaa",data)
       dispatch(setOnlineUser(data))
     })
+
+    dispatch(setSocketConnection(socketConnection))
 
     return () => {
       socketConnection.disconnect();

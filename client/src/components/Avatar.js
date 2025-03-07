@@ -27,7 +27,6 @@ const Avatar = ({ userId, name, imageUrl, width, height }) => {
       'bg-sky-200',
   ]
   const randomNumber = Math.floor(Math.random()* 7)
-  console.log(randomNumber);
 
   const isOnline = onlineUser.includes(userId)
   return (
