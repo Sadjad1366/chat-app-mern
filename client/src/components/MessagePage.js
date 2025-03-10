@@ -12,6 +12,7 @@ import { IoMdClose } from "react-icons/io";
 import Loading from "./Loading";
 import backgroundImage from "../assets/brandstroy.jpg";
 import { IoMdSend } from "react-icons/io";
+import moment from 'moment'
 
 
 const MessagePage = () => {
@@ -34,6 +35,14 @@ const MessagePage = () => {
     videoUrl: "",
   });
   const [loading, setLoading] = React.useState(false);
+  const [allMessage, setAllMessage] = React.useState([])
+  const currentMessage = React.useRef(null)
+
+  React.useEffect(() => {
+    if(currentMessage.current) {
+      currentMessage.current.scrollIntoView({behavior: 'smooth', block: 'end'})
+    }
+  }, [])
 
   const handleUploadImageVideoOpen = () => {
     setOpenImageVideoUpload((prev) => !prev);
@@ -89,11 +98,14 @@ const MessagePage = () => {
     if (socketConnection) {
       socketConnection.emit("message-page", params.userId);
 
+      socketConnection.emit('seen', params.userId)
+
       socketConnection.on("message-user", (data) => {
         setDataUser(data);
       });
       socketConnection.on('message', (data) => {
         console.log("message data", data)
+        setAllMessage(data)
       })
     }
   }, [socketConnection, params?.userId, user]);
@@ -121,6 +133,11 @@ const MessagePage = () => {
         imageUrl: message.imageUrl,
         videoUrl: message.videoUrl,
         msgByUserId: user?._id
+      })
+      setMessage({
+        text: "",
+        imageUrl: "",
+        videoUrl: "",
       })
     }
    }
@@ -167,9 +184,43 @@ const MessagePage = () => {
 
       {/**show all messages*/}
       <section className="h-[calc(100vh-128px)] overflow-x-hidden overflow-y-scroll scrollbar bg-slate-200 bg-opacity-30">
-        {/**upload Image Display*/}
-        {message.imageUrl && (
-          <div className="relative w-full h-full bg-slate-700 bg-opacity-30 flex justify-center items-center rounded overflow-hidden">
+
+        {/**all message show here */}
+        <div ref={currentMessage} className="flex flex-col gap-2 py-2 mx-2">
+        {allMessage?.map((msg, index) => {
+          return (
+            <div className={` p-1 py-1 rounded w-fit max-w-md max-h-[20px] ${user._id === msg.msgByUserId ? "ml-auto bg-teal-100" : "bg-white"}`}>
+              <div className='w-full'>
+                {
+                  msg?.imageUrl && (
+                    <img
+                    src={msg?.imageUrl}
+                    className='w-full h-full object-scale-down'
+                    />
+                  )
+                }
+              </div>
+              <div className='w-full'>
+                {
+                  msg?.videoUrl && (
+                    <video
+                    controls
+                    src={msg?.videoUrl}
+                    className='w-full h-full object-scale-down'
+                    />
+                  )
+                }
+              </div>
+             <p className="px-2">{msg.text}</p>
+             <p className='text-xs ml-auto w-fit'>{moment(msg.createdAt).format('hh:mm')}</p>
+            </div>
+          )
+        })}
+        </div>
+
+              {/**upload Image Display*/}
+              {message.imageUrl && (
+          <div className="w-full h-full sticky bottom-0 bg-slate-700 bg-opacity-30 flex justify-center items-center rounded overflow-hidden">
             <div
               onClick={handleClearUploadImage}
               className="w-fit absolute top-0 right-0  cursor-pointer"
@@ -187,7 +238,7 @@ const MessagePage = () => {
         )}
         {/**upload Image Display*/}
         {message.videoUrl && (
-          <div className="relative w-full h-full bg-slate-700 bg-opacity-30 flex justify-center items-center rounded overflow-hidden">
+          <div className="w-full h-full sticky bottom-0 bg-slate-700 bg-opacity-30 flex justify-center items-center rounded overflow-hidden">
             <div
               onClick={handleClearUploadVideo}
               className="w-fit absolute top-0 right-0  cursor-pointer"
@@ -207,11 +258,10 @@ const MessagePage = () => {
           </div>
         )}
         {loading && (
-          <div className="w-full h-full flex justify-center items-center">
+          <div className="w-full h-full sticky bottom-0 flex justify-center items-center">
             <Loading />
           </div>
         )}
-        Show all messages
       </section>
 
       {/**send messages*/}
